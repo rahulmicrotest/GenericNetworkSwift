@@ -1,0 +1,6 @@
+framework module Pods_DeltaTest {
+  umbrella header "Pods-DeltaTest-umbrella.h"
+
+  export *
+  module * { export * }
+}
