@@ -18,12 +18,14 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+        shouldHideLoader(isHidden: false)
         aboutCanadaViewModel.fetchTelstraData{(status, errorMsg) in
             switch status {
             case true: print(status)
             case false: print(errorMsg!)
+            self.showAlertWith(message: errorMsg!)
             }
+            self.shouldHideLoader(isHidden: true)
         }
      }
 }

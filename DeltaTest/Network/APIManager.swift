@@ -29,11 +29,16 @@ class APIManager {
         return sharedAPIManager
     }
     
-    private func parseApiError(data: Data?) -> AlertMessage {
+    private func parseApiError(data: Data?, errorObj: NSError?) -> AlertMessage {
         let decoder = JSONDecoder()
         if let jsonData = data, let error = try? decoder.decode(ErrorObject.self, from: jsonData) {
             return AlertMessage(title: Constants.errorAlertTitle, body: error.key ?? error.message)
         }
+        // For No Internet Connection Error
+        if let error = errorObj {
+            return AlertMessage(title: Constants.errorAlertTitle, body: error.localizedDescription)
+        }
+        // For Any Other error
         return AlertMessage(title: Constants.errorAlertTitle, body: Constants.genericErrorMessage)
     }
     
@@ -65,8 +70,8 @@ class APIManager {
                                                 handler(result, nil)
                                             }
                                             break
-                                        case .failure(_):
-                                            handler(nil, self.parseApiError(data: data.data))
+                                        case .failure(let error as NSError):
+                                            handler(nil, self.parseApiError(data: data.data, errorObj: error))
                                             break
                                         }
         }
@@ -88,8 +93,8 @@ class APIManager {
                                         case .success(_):
                                             handler((), nil)
                                             break
-                                        case .failure(_):
-                                            handler(nil, self.parseApiError(data: data.data))
+                                        case .failure(let error as NSError):
+                                            handler(nil, self.parseApiError(data: data.data, errorObj: error))
                                             break
                                         }
         }
